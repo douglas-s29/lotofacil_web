@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'lotteries:home' %}">Início</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'lotteries:dashboard' lottery_config.lottery_type %}">{{ lottery_config.get_lottery_type_display }}</a></li>
+                <li class="breadcrumb-item active">Resultados</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold" style="color: {{ lottery_config.primary_color }}">
+            📜 Resultados - {{ lottery_config.get_lottery_type_display }}
+        </h2>
+        <p class="text-muted">Histórico completo de sorteios</p>
+    </div>
+</div>
+
+{% if draws %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0">Sorteios Realizados</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover results-table">
+                <thead>
+                    <tr>
+                        <th>Concurso</th>
+                        <th>Data</th>
+                        <th>Números Sorteados</th>
+                        <th>Acumulado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for draw in draws %}
+                        <tr>
+                            <td><strong>{{ draw.contest_number }}</strong></td>
+                            <td>{{ draw.draw_date|date:"d/m/Y" }}</td>
+                            <td>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for number in draw.get_numbers_display %}
+                                        <div class="number-ball-small" style="background: {{ lottery_config.primary_color }}">
+                                            {{ number|stringformat:"02d" }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                {% if draw.numbers_second_draw %}
+                                    <div class="mt-2 d-flex flex-wrap gap-2">
+                                        <small class="text-muted me-2">2º Sorteio:</small>
+                                        {% for number in draw.numbers_second_draw %}
+                                            <div class="number-ball-small" style="background: {{ lottery_config.primary_color }}; opacity: 0.7;">
+                                                {{ number|stringformat:"02d" }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if draw.accumulated %}
+                                    <span class="badge bg-warning text-dark">Acumulou</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ draw.winners_count }} ganhador{{ draw.winners_count|pluralize:"es" }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if is_paginated %}
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">&laquo; Primeira</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            </li>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última &raquo;</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+{% else %}
+<div class="alert alert-info">
+    <h5>Nenhum resultado disponível</h5>
+    <p class="mb-0">
+        Ainda não há resultados históricos cadastrados para {{ lottery_config.get_lottery_type_display }}.
+        Os resultados podem ser importados através do painel administrativo.
+    </p>
+</div>
+{% endif %}
+
+<div class="alert alert-light mt-4">
+    <div class="d-flex align-items-start">
+        <span class="material-icons me-3">info</span>
+        <div>
+            <h6 class="fw-bold mb-2">Sobre os Resultados</h6>
+            <p class="small mb-0">
+                Os resultados apresentados são baseados em dados históricos e são mantidos apenas para fins 
+                estatísticos e informativos. Sempre confira os resultados oficiais no site da Caixa Econômica Federal.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

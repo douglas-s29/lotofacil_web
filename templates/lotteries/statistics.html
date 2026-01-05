@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'lotteries:home' %}">Início</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'lotteries:dashboard' object.lottery_type %}">{{ object.get_lottery_type_display }}</a></li>
+                <li class="breadcrumb-item active">Estatísticas</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold" style="color: {{ object.primary_color }}">
+            📊 Estatísticas - {{ object.get_lottery_type_display }}
+        </h2>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">🔥 Top 10 Mais Frequentes</h5>
+            </div>
+            <div class="card-body">
+                {% if most_frequent %}
+                    <p class="text-muted small mb-3">
+                        <span class="material-icons" style="font-size: 16px; vertical-align: middle;">info</span>
+                        Números que mais apareceram nos sorteios históricos
+                    </p>
+                    <div class="list-group">
+                        {% for stat in most_frequent %}
+                            <div class="list-group-item stats-card most-frequent">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="number-ball-small me-3" style="background: #28a745">
+                                            {{ stat.number|stringformat:"02d" }}
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">Número {{ stat.number }}</div>
+                                            <div class="text-muted small">{{ stat.frequency }} sorteios</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="small text-muted">Atraso: {{ stat.delay }} concursos</div>
+                                        <div class="progress stat-progress mt-1" style="width: 100px;">
+                                            <div class="progress-bar bg-success" style="width: {{ stat.frequency|floatformat:0 }}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Nenhuma estatística disponível ainda.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">⏱️ Top 10 Mais Atrasados</h5>
+            </div>
+            <div class="card-body">
+                {% if most_delayed %}
+                    <p class="text-muted small mb-3">
+                        <span class="material-icons" style="font-size: 16px; vertical-align: middle;">info</span>
+                        Números há mais tempo sem serem sorteados
+                    </p>
+                    <div class="list-group">
+                        {% for stat in most_delayed %}
+                            <div class="list-group-item stats-card most-delayed">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <div class="number-ball-small me-3" style="background: #dc3545">
+                                            {{ stat.number|stringformat:"02d" }}
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold">Número {{ stat.number }}</div>
+                                            <div class="text-muted small">Atraso: {{ stat.delay }} concursos</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="small text-muted">Frequência: {{ stat.frequency }} vezes</div>
+                                        <div class="small text-muted">Máx: {{ stat.max_delay }} concursos</div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Nenhuma estatística disponível ainda.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if all_statistics %}
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0">📈 Tabela Completa de Estatísticas</h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted small mb-3">
+            <span class="material-icons" style="font-size: 16px; vertical-align: middle;">info</span>
+            Estatísticas completas de todos os números baseadas no histórico de sorteios
+        </p>
+        <div class="table-responsive">
+            <table class="table table-hover results-table">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Frequência</th>
+                        <th>Atraso</th>
+                        <th>Atraso Máximo</th>
+                        <th>Atraso Médio</th>
+                        <th>Último Concurso</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stat in all_statistics %}
+                        <tr>
+                            <td>
+                                <div class="number-ball-small" style="background: {{ object.primary_color }}">
+                                    {{ stat.number|stringformat:"02d" }}
+                                </div>
+                            </td>
+                            <td><strong>{{ stat.frequency }}</strong> vezes</td>
+                            <td>
+                                <span class="badge {% if stat.delay > 10 %}bg-danger{% elif stat.delay > 5 %}bg-warning text-dark{% else %}bg-success{% endif %}">
+                                    {{ stat.delay }} concursos
+                                </span>
+                            </td>
+                            <td>{{ stat.max_delay }} concursos</td>
+                            <td>{{ stat.average_delay|floatformat:1 }} concursos</td>
+                            <td>
+                                {% if stat.last_draw_contest %}
+                                    {{ stat.last_draw_contest }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">
+    <h5>Nenhuma estatística disponível</h5>
+    <p class="mb-0">As estatísticas serão calculadas automaticamente após adicionar resultados históricos.</p>
+</div>
+{% endif %}
+
+<div class="alert alert-light mt-4">
+    <div class="d-flex align-items-start">
+        <span class="material-icons me-3">info</span>
+        <div>
+            <h6 class="fw-bold mb-2">Como Interpretar as Estatísticas</h6>
+            <ul class="small mb-0">
+                <li><strong>Frequência:</strong> Quantidade de vezes que o número foi sorteado no histórico</li>
+                <li><strong>Atraso:</strong> Quantidade de concursos desde a última vez que o número foi sorteado</li>
+                <li><strong>Atraso Máximo:</strong> Maior período que o número ficou sem ser sorteado</li>
+                <li><strong>Atraso Médio:</strong> Média de concursos entre as aparições do número</li>
+            </ul>
+            <p class="small mt-2 mb-0 text-muted">
+                <strong>Importante:</strong> Estas estatísticas são apenas informativas. Cada sorteio é um evento 
+                independente e aleatório, e resultados passados não influenciam resultados futuros.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
