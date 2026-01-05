@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="text-center mb-5">
+    <h1 class="display-4 fw-bold mb-3">🍀 Cebolão Loto Generator</h1>
+    <p class="lead text-muted">
+        Análise estatística e geração inteligente de combinações para loterias da Caixa
+    </p>
+</div>
+
+<div class="row g-4 mb-5">
+    {% for lottery in lottery_types %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card h-100 shadow-sm lottery-card" style="border-top: 4px solid {{ lottery.primary_color }}">
+            <div class="card-body">
+                <h5 class="card-title fw-bold" style="color: {{ lottery.primary_color }}">
+                    {{ lottery.get_lottery_type_display }}
+                </h5>
+                <p class="card-text text-muted small">
+                    {{ lottery.description|default:"Análise e geração de jogos" }}
+                </p>
+                <div class="mb-3">
+                    <span class="badge bg-light text-dark me-2">
+                        {{ lottery.numbers_to_pick }} de {{ lottery.total_numbers }} números
+                    </span>
+                </div>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'lotteries:dashboard' lottery.lottery_type %}" 
+                       class="btn btn-primary">
+                        Ver Dashboard
+                    </a>
+                    <a href="{% url 'lotteries:generator' lottery.lottery_type %}" 
+                       class="btn btn-outline-primary">
+                        Gerar Combinações
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h5>Nenhuma loteria configurada</h5>
+            <p class="mb-0">
+                Por favor, execute as migrações e configure as loterias usando o comando de gerenciamento.
+            </p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <span class="material-icons text-primary" style="font-size: 48px;">query_stats</span>
+                <h5 class="card-title mt-3">Análise Estatística</h5>
+                <p class="card-text text-muted small">
+                    Frequência de números, atrasos, padrões históricos e muito mais
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <span class="material-icons text-success" style="font-size: 48px;">auto_awesome</span>
+                <h5 class="card-title mt-3">Geração Inteligente</h5>
+                <p class="card-text text-muted small">
+                    Crie combinações com filtros personalizados baseados em estatísticas
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-body text-center">
+                <span class="material-icons text-warning" style="font-size: 48px;">history</span>
+                <h5 class="card-title mt-3">Histórico Completo</h5>
+                <p class="card-text text-muted small">
+                    Acesse todos os resultados históricos e compare suas combinações
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-warning mt-5">
+    <div class="d-flex align-items-start">
+        <span class="material-icons me-3">warning</span>
+        <div>
+            <h6 class="fw-bold mb-2">Aviso Legal Importante</h6>
+            <p class="small mb-0">
+                Este sistema é puramente analítico e educacional. As estatísticas apresentadas são baseadas 
+                em resultados históricos e não garantem resultados futuros. Os sorteios de loteria são 
+                eventos aleatórios e independentes. Não há método que aumente matematicamente suas chances 
+                de ganhar. Jogue com responsabilidade.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .lottery-card {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .lottery-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
+{% endblock %}

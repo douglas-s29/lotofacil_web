@@ -1,0 +1,167 @@
+/* Custom styles for Cebolão Loto */
+
+:root {
+    --mega-sena: #209869;
+    --lotofacil: #930089;
+    --quina: #260085;
+    --dupla-sena: #A61324;
+    --super-sete: #A8CF45;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f8f9fa;
+}
+
+.lottery-card {
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.lottery-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Number balls */
+.number-ball {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 18px;
+    margin: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.number-ball-small {
+    width: 35px;
+    height: 35px;
+    font-size: 14px;
+}
+
+/* Stats cards */
+.stats-card {
+    border-radius: 8px;
+    border-left: 4px solid;
+    transition: transform 0.2s;
+}
+
+.stats-card:hover {
+    transform: translateX(5px);
+}
+
+.stats-card.most-frequent {
+    border-left-color: #28a745;
+}
+
+.stats-card.most-delayed {
+    border-left-color: #dc3545;
+}
+
+/* Progress bars for statistics */
+.stat-progress {
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+/* Tooltips */
+.info-tooltip {
+    cursor: help;
+    color: #6c757d;
+}
+
+/* Generator filters */
+.filter-section {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Results table */
+.results-table {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.results-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Buttons */
+.btn-lottery {
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.btn-lottery:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Cards */
+.card {
+    border-radius: 12px;
+    border: none;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px 12px 0 0 !important;
+    font-weight: 600;
+}
+
+/* Navbar */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer */
+footer {
+    border-top: 1px solid #dee2e6;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .number-ball {
+        width: 38px;
+        height: 38px;
+        font-size: 16px;
+    }
+    
+    .number-ball-small {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+}
