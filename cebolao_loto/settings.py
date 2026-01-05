@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-z4qt#8uo%(t&v9j)_yyv(t-r04zxa=cthz&ad0=c1+h+yd(nf#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['lotofacil-web.herokuapp.com']
 
 
 # Application definition
