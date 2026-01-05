@@ -38,7 +38,8 @@ class StatisticsService:
             delays = []
             last_seen = None
             
-            for draw in draws.reverse():  # Process chronologically
+            # Process draws chronologically
+            for draw in draws.order_by('contest_number'):
                 numbers = draw.get_numbers_display()
                 
                 if number in numbers:
@@ -49,11 +50,11 @@ class StatisticsService:
                     last_contest = draw.contest_number
             
             # Calculate delay (contests since last appearance)
-            delay = latest_contest - last_contest if last_contest else latest_contest
+            delay = latest_contest - last_contest if last_contest else 0
             
             # Calculate average and max delay
-            avg_delay = sum(delays) / len(delays) if delays else 0
-            max_delay = max(delays) if delays else delay
+            avg_delay = sum(delays) / len(delays) if delays else 0.0
+            max_delay = max(delays) if delays else 0
             
             # Update or create statistics
             NumberStatistics.objects.update_or_create(

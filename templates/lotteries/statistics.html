@@ -45,7 +45,7 @@
                                     <div class="text-end">
                                         <div class="small text-muted">Atraso: {{ stat.delay }} concursos</div>
                                         <div class="progress stat-progress mt-1" style="width: 100px;">
-                                            <div class="progress-bar bg-success" style="width: {{ stat.frequency|floatformat:0 }}%"></div>
+                                            <div class="progress-bar bg-success" style="width: {% widthratio stat.frequency max_frequency 100 %}%"></div>
                                         </div>
                                     </div>
                                 </div>

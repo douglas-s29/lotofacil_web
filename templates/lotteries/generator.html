@@ -30,21 +30,10 @@
                         <span class="material-icons info-tooltip" data-bs-toggle="tooltip" title="Quantos números você quer em cada jogo">info</span>
                     </label>
                     <select class="form-select" id="numbersCount" name="numbersCount">
-                        {% for i in object.min_bet_numbers|default:object.numbers_to_pick|make_list %}
-                            {% if forloop.counter >= object.min_bet_numbers|default:object.numbers_to_pick and forloop.counter <= object.max_bet_numbers|default:object.numbers_to_pick %}
-                                <option value="{{ forloop.counter }}" {% if forloop.counter == object.numbers_to_pick %}selected{% endif %}>
-                                    {{ forloop.counter }} números
-                                </option>
-                            {% endif %}
-                        {% endfor %}
-                        {% for i in "123456789012345"|make_list %}
-                            {% with total=object.min_bet_numbers|default:object.numbers_to_pick|add:forloop.counter %}
-                                {% if total <= object.max_bet_numbers|default:object.numbers_to_pick %}
-                                    <option value="{{ total }}" {% if total == object.numbers_to_pick %}selected{% endif %}>
-                                        {{ total }} números
-                                    </option>
-                                {% endif %}
-                            {% endwith %}
+                        {% for count in bet_count_range %}
+                            <option value="{{ count }}" {% if count == object.numbers_to_pick %}selected{% endif %}>
+                                {{ count }} números
+                            </option>
                         {% endfor %}
                     </select>
                 </div>
@@ -94,16 +83,10 @@
                         <span class="material-icons info-tooltip" data-bs-toggle="tooltip" title="Números que devem aparecer em todas as combinações">info</span>
                     </label>
                     <div id="numberSelector" class="d-flex flex-wrap gap-2">
-                        {% for i in "0123456789"|make_list %}
-                            {% for j in "0123456789"|make_list %}
-                                {% with num=forloop.parentloop.counter0|add:forloop.counter0|add:forloop.parentloop.counter0|add:1 %}
-                                    {% if num <= object.total_numbers %}
-                                        <button type="button" class="btn btn-outline-secondary btn-sm number-selector" data-number="{{ num }}">
-                                            {{ num|stringformat:"02d" }}
-                                        </button>
-                                    {% endif %}
-                                {% endwith %}
-                            {% endfor %}
+                        {% for num in number_range %}
+                            <button type="button" class="btn btn-outline-secondary btn-sm number-selector" data-number="{{ num }}">
+                                {{ num|stringformat:"02d" }}
+                            </button>
                         {% endfor %}
                     </div>
                     <input type="hidden" id="fixedNumbers" name="fixedNumbers">

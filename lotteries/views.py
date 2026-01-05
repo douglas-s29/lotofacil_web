@@ -77,9 +77,10 @@ class StatisticsView(DetailView):
         lottery_type = self.object.lottery_type
         
         # All number statistics
-        context['all_statistics'] = NumberStatistics.objects.filter(
+        all_stats = NumberStatistics.objects.filter(
             lottery_type=lottery_type
         ).order_by('number')
+        context['all_statistics'] = all_stats
         
         # Most frequent numbers
         context['most_frequent'] = NumberStatistics.objects.filter(
@@ -90,6 +91,12 @@ class StatisticsView(DetailView):
         context['most_delayed'] = NumberStatistics.objects.filter(
             lottery_type=lottery_type
         ).order_by('-delay')[:10]
+        
+        # Calculate max frequency for progress bar calculation
+        if all_stats:
+            context['max_frequency'] = max([s.frequency for s in all_stats])
+        else:
+            context['max_frequency'] = 1
         
         context['page_title'] = f'Estatísticas - {self.object.get_lottery_type_display()}'
         return context
@@ -110,6 +117,14 @@ class GeneratorView(DetailView):
         context['statistics'] = NumberStatistics.objects.filter(
             lottery_type=lottery_type
         ).order_by('number')
+        
+        # Create number range for selector
+        context['number_range'] = range(1, self.object.total_numbers + 1)
+        
+        # Create bet count range
+        min_bet = self.object.min_bet_numbers or self.object.numbers_to_pick
+        max_bet = self.object.max_bet_numbers or self.object.numbers_to_pick
+        context['bet_count_range'] = range(min_bet, max_bet + 1)
         
         context['page_title'] = f'Gerador - {self.object.get_lottery_type_display()}'
         return context
