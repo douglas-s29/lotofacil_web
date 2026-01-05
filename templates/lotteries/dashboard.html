@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="fw-bold" style="color: {{ object.primary_color }}">
+                    {{ object.get_lottery_type_display }}
+                </h2>
+                <p class="text-muted">{{ object.description }}</p>
+            </div>
+            <div>
+                <span class="badge bg-light text-dark fs-6">
+                    {{ object.numbers_to_pick }} de {{ object.total_numbers }} números
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <span class="material-icons text-primary mb-2" style="font-size: 40px;">emoji_events</span>
+                <h6 class="text-muted small">Último Concurso</h6>
+                <h4 class="fw-bold">
+                    {% if latest_draws %}
+                        {{ latest_draws.0.contest_number }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <span class="material-icons text-success mb-2" style="font-size: 40px;">calendar_today</span>
+                <h6 class="text-muted small">Data do Sorteio</h6>
+                <h6 class="fw-bold">
+                    {% if latest_draws %}
+                        {{ latest_draws.0.draw_date|date:"d/m/Y" }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </h6>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <span class="material-icons text-warning mb-2" style="font-size: 40px;">trending_up</span>
+                <h6 class="text-muted small">Total de Sorteios</h6>
+                <h4 class="fw-bold">{{ latest_draws.count }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <span class="material-icons text-info mb-2" style="font-size: 40px;">auto_awesome</span>
+                <h6 class="text-muted small">Ação Rápida</h6>
+                <a href="{% url 'lotteries:generator' object.lottery_type %}" class="btn btn-primary btn-sm">
+                    Gerar Jogo
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if latest_draws %}
+<div class="card shadow-sm mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">🎯 Último Resultado</h5>
+    </div>
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="text-muted mb-2">Concurso {{ latest_draws.0.contest_number }} - {{ latest_draws.0.draw_date|date:"d/m/Y" }}</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for number in latest_draws.0.get_numbers_display %}
+                        <div class="number-ball" style="background: {{ object.primary_color }}">
+                            {{ number|stringformat:"02d" }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="mb-0">🔥 Números Mais Sorteados</h5>
+            </div>
+            <div class="card-body">
+                {% if statistics %}
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        {% for stat in statistics|slice:":10" %}
+                            <div class="number-ball-small" style="background: linear-gradient(135deg, #28a745, #20c997)">
+                                {{ stat.number|stringformat:"02d" }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'lotteries:statistics' object.lottery_type %}" class="btn btn-outline-primary btn-sm">
+                        Ver Todas as Estatísticas
+                    </a>
+                {% else %}
+                    <p class="text-muted">Nenhuma estatística disponível ainda.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h5 class="mb-0">📜 Últimos Concursos</h5>
+            </div>
+            <div class="card-body">
+                {% if latest_draws %}
+                    <div class="list-group list-group-flush">
+                        {% for draw in latest_draws|slice:":5" %}
+                            <div class="list-group-item px-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold">{{ draw.contest_number }}</span>
+                                    <span class="text-muted small">{{ draw.draw_date|date:"d/m/Y" }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'lotteries:draws' object.lottery_type %}" class="btn btn-outline-primary btn-sm mt-3">
+                        Ver Todos os Resultados
+                    </a>
+                {% else %}
+                    <p class="text-muted">Nenhum resultado disponível ainda.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">🚀 Ferramentas Disponíveis</h5>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-4">
+                        <a href="{% url 'lotteries:generator' object.lottery_type %}" class="text-decoration-none">
+                            <div class="p-3 border rounded hover-shadow">
+                                <span class="material-icons text-primary">auto_awesome</span>
+                                <h6 class="mt-2">Gerador de Combinações</h6>
+                                <p class="text-muted small mb-0">Crie jogos com filtros personalizados</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{% url 'lotteries:statistics' object.lottery_type %}" class="text-decoration-none">
+                            <div class="p-3 border rounded hover-shadow">
+                                <span class="material-icons text-success">query_stats</span>
+                                <h6 class="mt-2">Análise Estatística</h6>
+                                <p class="text-muted small mb-0">Frequências, atrasos e padrões</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{% url 'lotteries:draws' object.lottery_type %}" class="text-decoration-none">
+                            <div class="p-3 border rounded hover-shadow">
+                                <span class="material-icons text-warning">history</span>
+                                <h6 class="mt-2">Histórico Completo</h6>
+                                <p class="text-muted small mb-0">Todos os resultados anteriores</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hover-shadow {
+        transition: all 0.3s;
+    }
+    .hover-shadow:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}

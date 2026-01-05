@@ -4,3 +4,15 @@ db.sqlite3
 media/
 staticfiles/
 .env
+*.log
+*.pot
+*.mo
+.coverage
+htmlcov/
+.pytest_cache/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store

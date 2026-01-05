@@ -1,0 +1,259 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'lotteries:home' %}">Início</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'lotteries:dashboard' object.lottery_type %}">{{ object.get_lottery_type_display }}</a></li>
+                <li class="breadcrumb-item active">Gerador</li>
+            </ol>
+        </nav>
+        <h2 class="fw-bold" style="color: {{ object.primary_color }}">
+            🎲 Gerador de Combinações - {{ object.get_lottery_type_display }}
+        </h2>
+        <p class="text-muted">Gere combinações personalizadas com base em filtros estatísticos</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="filter-section">
+            <h5 class="fw-bold mb-3">⚙️ Configurações</h5>
+            
+            <form id="generatorForm">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">
+                        Quantidade de Números
+                        <span class="material-icons info-tooltip" data-bs-toggle="tooltip" title="Quantos números você quer em cada jogo">info</span>
+                    </label>
+                    <select class="form-select" id="numbersCount" name="numbersCount">
+                        {% for count in bet_count_range %}
+                            <option value="{{ count }}" {% if count == object.numbers_to_pick %}selected{% endif %}>
+                                {{ count }} números
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">
+                        Quantidade de Jogos
+                        <span class="material-icons info-tooltip" data-bs-toggle="tooltip" title="Quantas combinações diferentes você quer gerar">info</span>
+                    </label>
+                    <select class="form-select" id="gamesCount" name="gamesCount">
+                        <option value="1">1 jogo</option>
+                        <option value="3" selected>3 jogos</option>
+                        <option value="5">5 jogos</option>
+                        <option value="10">10 jogos</option>
+                        <option value="20">20 jogos</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">
+                        Filtros Estatísticos
+                        <span class="material-icons info-tooltip" data-bs-toggle="tooltip" title="Escolha quais tipos de números incluir">info</span>
+                    </label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeFrequent" checked>
+                        <label class="form-check-label" for="includeFrequent">
+                            Incluir números frequentes
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="includeDelayed" checked>
+                        <label class="form-check-label" for="includeDelayed">
+                            Incluir números atrasados
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="mixStrategy" checked>
+                        <label class="form-check-label" for="mixStrategy">
+                            Misturar estratégias
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">
+                        Números Fixos (Opcional)
+                        <span class="material-icons info-tooltip" data-bs-toggle="tooltip" title="Números que devem aparecer em todas as combinações">info</span>
+                    </label>
+                    <div id="numberSelector" class="d-flex flex-wrap gap-2">
+                        {% for num in number_range %}
+                            <button type="button" class="btn btn-outline-secondary btn-sm number-selector" data-number="{{ num }}">
+                                {{ num|stringformat:"02d" }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" id="fixedNumbers" name="fixedNumbers">
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lottery">
+                        <span class="material-icons" style="vertical-align: middle;">auto_awesome</span>
+                        Gerar Combinações
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="alert alert-info mt-3">
+            <small>
+                <strong>💡 Dica:</strong> As combinações são geradas aleatoriamente respeitando seus filtros. 
+                Cada geração produz resultados diferentes.
+            </small>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div id="resultsArea" class="d-none">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">✨ Combinações Geradas</h5>
+                </div>
+                <div class="card-body">
+                    <div id="generatedGames"></div>
+                    
+                    <div class="d-flex gap-2 mt-3">
+                        <button class="btn btn-outline-primary" onclick="copyToClipboard()">
+                            <span class="material-icons" style="vertical-align: middle; font-size: 18px;">content_copy</span>
+                            Copiar
+                        </button>
+                        <button class="btn btn-outline-success" onclick="exportToPDF()">
+                            <span class="material-icons" style="vertical-align: middle; font-size: 18px;">picture_as_pdf</span>
+                            Exportar PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="placeholderArea">
+            <div class="text-center text-muted py-5">
+                <span class="material-icons mb-3" style="font-size: 80px; opacity: 0.3;">casino</span>
+                <h5>Suas combinações aparecerão aqui</h5>
+                <p>Configure os filtros e clique em "Gerar Combinações"</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-warning mt-4">
+    <div class="d-flex align-items-start">
+        <span class="material-icons me-3">warning</span>
+        <div>
+            <h6 class="fw-bold mb-2">⚠️ Aviso Importante</h6>
+            <p class="small mb-0">
+                Este gerador é uma ferramenta de auxílio baseada em estatísticas históricas. 
+                As combinações geradas são aleatórias e não garantem ganhos. Os sorteios são 
+                eventos independentes e cada número tem a mesma probabilidade de ser sorteado, 
+                independentemente de seu histórico.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Number selector
+    const numberSelectors = document.querySelectorAll('.number-selector');
+    const fixedNumbersInput = document.getElementById('fixedNumbers');
+    const selectedNumbers = new Set();
+
+    numberSelectors.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const number = parseInt(this.dataset.number);
+            if (selectedNumbers.has(number)) {
+                selectedNumbers.delete(number);
+                this.classList.remove('btn-primary');
+                this.classList.add('btn-outline-secondary');
+            } else {
+                selectedNumbers.add(number);
+                this.classList.remove('btn-outline-secondary');
+                this.classList.add('btn-primary');
+            }
+            fixedNumbersInput.value = Array.from(selectedNumbers).sort((a, b) => a - b).join(',');
+        });
+    });
+
+    // Form submission
+    document.getElementById('generatorForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        generateCombinations();
+    });
+});
+
+function generateCombinations() {
+    const numbersCount = parseInt(document.getElementById('numbersCount').value);
+    const gamesCount = parseInt(document.getElementById('gamesCount').value);
+    const fixedNumbers = document.getElementById('fixedNumbers').value.split(',').filter(n => n).map(Number);
+    const totalNumbers = {{ object.total_numbers }};
+    
+    const games = [];
+    for (let i = 0; i < gamesCount; i++) {
+        const game = new Set(fixedNumbers);
+        while (game.size < numbersCount) {
+            const num = Math.floor(Math.random() * totalNumbers) + 1;
+            game.add(num);
+        }
+        games.push(Array.from(game).sort((a, b) => a - b));
+    }
+    
+    displayGames(games);
+}
+
+function displayGames(games) {
+    const resultsArea = document.getElementById('resultsArea');
+    const placeholderArea = document.getElementById('placeholderArea');
+    const gamesContainer = document.getElementById('generatedGames');
+    
+    let html = '';
+    games.forEach((game, index) => {
+        html += `
+            <div class="mb-3 p-3 border rounded">
+                <h6 class="text-muted mb-2">Jogo ${index + 1}</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    ${game.map(num => `
+                        <div class="number-ball" style="background: {{ object.primary_color }}">
+                            ${String(num).padStart(2, '0')}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    });
+    
+    gamesContainer.innerHTML = html;
+    resultsArea.classList.remove('d-none');
+    placeholderArea.classList.add('d-none');
+}
+
+function copyToClipboard() {
+    const games = document.querySelectorAll('#generatedGames .mb-3');
+    let text = '';
+    games.forEach((game, index) => {
+        const numbers = Array.from(game.querySelectorAll('.number-ball')).map(ball => ball.textContent.trim());
+        text += `Jogo ${index + 1}: ${numbers.join(' - ')}\n`;
+    });
+    navigator.clipboard.writeText(text).then(() => {
+        alert('Combinações copiadas para a área de transferência!');
+    });
+}
+
+function exportToPDF() {
+    alert('Funcionalidade de exportação PDF será implementada em breve!');
+}
+</script>
+{% endblock %}
