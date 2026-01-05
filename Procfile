@@ -1,0 +1,1 @@
+web: gunicorn lotofacil_web.wsgi
