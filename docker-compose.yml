@@ -27,7 +27,7 @@ services:
     container_name: lotofacil_backend
     environment:
       DATABASE_URL: postgresql://postgres:postgres@db:5432/lotofacil_web
-      SECRET_KEY: ${SECRET_KEY:-your-secret-key-change-in-production}
+      SECRET_KEY: ${SECRET_KEY}
       CORS_ORIGINS: '["http://localhost:3000","http://localhost"]'
     ports:
       - "8000:8000"

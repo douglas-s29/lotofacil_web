@@ -37,7 +37,7 @@ async def generate_combinations(
 @router.post("/validate")
 async def validate_combination(
     lottery_type: str,
-    numbers: list[int],
+    numbers: List[int],
     db: Session = Depends(get_db)
 ):
     """Validate a combination"""

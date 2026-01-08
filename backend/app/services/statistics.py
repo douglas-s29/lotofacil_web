@@ -44,6 +44,7 @@ class StatisticsService:
             frequency = 0
             last_contest = None
             delays = []
+            current_delay_count = 0
             
             # Count frequency and track delays
             for draw in reversed(draws):
@@ -52,12 +53,15 @@ class StatisticsService:
                     if last_contest is None:
                         last_contest = draw.contest_number
                     
-                    if len(delays) > 0:
-                        delays.append(0)
-                    delays.append(0)
+                    if current_delay_count > 0:
+                        delays.append(current_delay_count)
+                    current_delay_count = 0
                 else:
-                    if delays:
-                        delays[-1] += 1
+                    current_delay_count += 1
+            
+            # Add final delay if number hasn't appeared recently
+            if current_delay_count > 0:
+                delays.append(current_delay_count)
             
             # Calculate delay metrics
             current_delay = latest_contest - last_contest if last_contest else latest_contest
