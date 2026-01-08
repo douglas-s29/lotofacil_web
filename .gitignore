@@ -16,3 +16,31 @@ htmlcov/
 *.swo
 *~
 .DS_Store
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+.next/
+out/
+dist/
+
+# Backend
+backend/.env
+backend/__pycache__/
+backend/*.pyc
+backend/alembic/versions/*.py
+
+# Frontend
+frontend/.env
+frontend/.env.local
+frontend/.env.production.local
+frontend/.next/
+frontend/out/
+frontend/node_modules/
+
+# Docker
+*.env.local
