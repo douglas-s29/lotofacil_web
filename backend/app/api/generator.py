@@ -1,5 +1,5 @@
 """
-Generator API endpoints
+Endpoints da API de Gerador
 """
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -15,7 +15,7 @@ async def generate_combinations(
     request: GeneratorRequest,
     db: Session = Depends(get_db)
 ):
-    """Generate lottery combinations"""
+    """Gerar combinações de loteria"""
     try:
         result = CombinationGeneratorService.generate_combinations(
             db=db,
@@ -40,7 +40,7 @@ async def validate_combination(
     numbers: List[int],
     db: Session = Depends(get_db)
 ):
-    """Validate a combination"""
+    """Validar uma combinação"""
     try:
         result = CombinationGeneratorService.validate_combination(
             db=db,

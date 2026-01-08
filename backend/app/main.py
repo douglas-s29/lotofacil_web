@@ -9,7 +9,7 @@ from app.api import lotteries, statistics, generator, checker, combinations
 app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.VERSION,
-    description="Modern lottery analysis and number generation API",
+    description="API moderna para análise de loterias e geração de números",
 )
 
 # Configure CORS
@@ -31,7 +31,7 @@ app.include_router(combinations.router, prefix="/api/combinations", tags=["combi
 
 @app.get("/")
 async def root():
-    """Root endpoint"""
+    """Endpoint raiz"""
     return {
         "message": "Lotofácil Web API",
         "version": settings.VERSION,
@@ -41,5 +41,5 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
+    """Endpoint de verificação de saúde"""
     return {"status": "healthy"}

@@ -1,5 +1,5 @@
 """
-Checker API endpoints
+Endpoints da API de Conferidor
 """
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -15,7 +15,7 @@ async def check_combination(
     request: CheckerRequest,
     db: Session = Depends(get_db)
 ):
-    """Check combination against draw results"""
+    """Conferir combinação contra resultados de sorteios"""
     try:
         result = ResultCheckerService.check_combination(
             db=db,

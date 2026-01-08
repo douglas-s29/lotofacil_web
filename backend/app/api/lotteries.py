@@ -1,5 +1,5 @@
 """
-Lotteries API endpoints
+Endpoints da API de Loterias
 """
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -14,20 +14,20 @@ router = APIRouter()
 
 @router.get("/", response_model=List[LotteryConfig])
 async def list_lotteries(db: Session = Depends(get_db)):
-    """List all lottery configurations"""
+    """Listar todas as configurações de loterias"""
     lotteries = db.query(LotteryConfiguration).all()
     return lotteries
 
 
 @router.get("/{lottery_type}", response_model=LotteryConfig)
 async def get_lottery(lottery_type: str, db: Session = Depends(get_db)):
-    """Get specific lottery configuration"""
+    """Obter configuração específica de uma loteria"""
     lottery = db.query(LotteryConfiguration).filter(
         LotteryConfiguration.lottery_type == lottery_type
     ).first()
     
     if not lottery:
-        raise HTTPException(status_code=404, detail="Lottery not found")
+        raise HTTPException(status_code=404, detail="Loteria não encontrada")
     
     return lottery
 
@@ -39,7 +39,7 @@ async def list_draws(
     offset: int = 0,
     db: Session = Depends(get_db)
 ):
-    """List draws for a lottery"""
+    """Listar sorteios de uma loteria"""
     draws = db.query(Draw).filter(
         Draw.lottery_type == lottery_type
     ).order_by(desc(Draw.contest_number)).offset(offset).limit(limit).all()
@@ -49,13 +49,13 @@ async def list_draws(
 
 @router.get("/{lottery_type}/draws/latest")
 async def get_latest_draw(lottery_type: str, db: Session = Depends(get_db)):
-    """Get latest draw for a lottery"""
+    """Obter último sorteio de uma loteria"""
     draw = db.query(Draw).filter(
         Draw.lottery_type == lottery_type
     ).order_by(desc(Draw.contest_number)).first()
     
     if not draw:
-        raise HTTPException(status_code=404, detail="No draws found")
+        raise HTTPException(status_code=404, detail="Nenhum sorteio encontrado")
     
     return draw
 
@@ -66,13 +66,13 @@ async def get_draw(
     contest_number: int,
     db: Session = Depends(get_db)
 ):
-    """Get specific draw by contest number"""
+    """Obter sorteio específico por número do concurso"""
     draw = db.query(Draw).filter(
         Draw.lottery_type == lottery_type,
         Draw.contest_number == contest_number
     ).first()
     
     if not draw:
-        raise HTTPException(status_code=404, detail="Draw not found")
+        raise HTTPException(status_code=404, detail="Sorteio não encontrado")
     
     return draw

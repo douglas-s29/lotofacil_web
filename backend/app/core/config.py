@@ -6,7 +6,7 @@ from typing import List
 
 
 class Settings(BaseSettings):
-    """Application settings"""
+    """Configurações da aplicação"""
     
     # Project
     PROJECT_NAME: str = "Lotofácil Web API"
