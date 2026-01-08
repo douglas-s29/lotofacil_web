@@ -1,5 +1,5 @@
 /**
- * Lottery type configurations
+ * Configurações de tipos de loteria
  */
 export const LOTTERY_CONFIGS = {
   MEGA_SENA: {
@@ -32,7 +32,7 @@ export const LOTTERY_CONFIGS = {
 export type LotteryType = keyof typeof LOTTERY_CONFIGS;
 
 /**
- * Format currency to BRL
+ * Formatar moeda para BRL
  */
 export function formatCurrency(value: number | string): string {
   const numValue = typeof value === 'string' ? parseFloat(value) : value;
@@ -43,7 +43,7 @@ export function formatCurrency(value: number | string): string {
 }
 
 /**
- * Format date to Brazilian format
+ * Formatar data para formato brasileiro
  */
 export function formatDate(date: string | Date): string {
   const d = typeof date === 'string' ? new Date(date) : date;
@@ -51,7 +51,7 @@ export function formatDate(date: string | Date): string {
 }
 
 /**
- * Get session key from localStorage or generate new one
+ * Obter chave de sessão do localStorage ou gerar uma nova
  */
 export function getSessionKey(): string {
   if (typeof window === 'undefined') return '';
