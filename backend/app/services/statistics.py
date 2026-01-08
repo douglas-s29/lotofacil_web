@@ -1,6 +1,6 @@
 """
-Statistics calculation service
-Migrated from Django services
+Serviço de cálculo de estatísticas
+Migrado dos serviços Django
 """
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc
@@ -12,12 +12,12 @@ logger = logging.getLogger(__name__)
 
 
 class StatisticsService:
-    """Service for calculating and retrieving lottery statistics"""
+    """Serviço para cálculo e recuperação de estatísticas de loteria"""
     
     @staticmethod
     def calculate_statistics(db: Session, lottery_type: str) -> None:
-        """Calculate statistics for all numbers of a lottery type"""
-        logger.info(f"Calculating statistics for {lottery_type}")
+        """Calcular estatísticas para todos os números de um tipo de loteria"""
+        logger.info(f"Calculando estatísticas para {lottery_type}")
         
         # Get lottery configuration
         config = db.query(LotteryConfiguration).filter(

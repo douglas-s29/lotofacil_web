@@ -1,6 +1,6 @@
 """
-SQLAlchemy models for lottery application
-Migrated from Django models
+Modelos SQLAlchemy para aplicação de loteria
+Migrados dos modelos Django
 """
 from sqlalchemy import Column, Integer, String, Float, Boolean, Date, DateTime, Text, Numeric, Index, ForeignKey, JSON
 from sqlalchemy.orm import relationship
@@ -10,7 +10,7 @@ import enum
 
 
 class LotteryType(str, enum.Enum):
-    """Lottery types supported by the system"""
+    """Tipos de loteria suportados pelo sistema"""
     MEGA_SENA = "MEGA_SENA"
     LOTOFACIL = "LOTOFACIL"
     QUINA = "QUINA"
@@ -19,7 +19,7 @@ class LotteryType(str, enum.Enum):
 
 
 class LotteryConfiguration(Base):
-    """Configuration for each lottery type"""
+    """Configuração para cada tipo de loteria"""
     __tablename__ = "lottery_configuration"
     
     id = Column(Integer, primary_key=True, index=True)
@@ -36,7 +36,7 @@ class LotteryConfiguration(Base):
 
 
 class Draw(Base):
-    """Historical draw/contest results"""
+    """Resultados históricos de sorteios/concursos"""
     __tablename__ = "draw"
     
     id = Column(Integer, primary_key=True, index=True)
@@ -62,7 +62,7 @@ class Draw(Base):
 
 
 class NumberStatistics(Base):
-    """Cached statistics for lottery numbers"""
+    """Estatísticas em cache para números de loteria"""
     __tablename__ = "number_statistics"
     
     id = Column(Integer, primary_key=True, index=True)
@@ -86,7 +86,7 @@ class NumberStatistics(Base):
 
 
 class UserCombination(Base):
-    """User saved combinations"""
+    """Combinações salvas pelo usuário"""
     __tablename__ = "user_combination"
     
     id = Column(Integer, primary_key=True, index=True)
@@ -102,7 +102,7 @@ class UserCombination(Base):
 
 
 class GenerationFilter(Base):
-    """Saved filter configurations for combination generation"""
+    """Configurações de filtro salvas para geração de combinações"""
     __tablename__ = "generation_filter"
     
     id = Column(Integer, primary_key=True, index=True)

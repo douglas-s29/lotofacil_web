@@ -1,6 +1,6 @@
 """
-Result checker service
-Migrated from Django services
+Serviço de conferidor de resultados
+Migrado dos serviços Django
 """
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class ResultCheckerService:
-    """Service for checking combinations against draw results"""
+    """Serviço para conferir combinações contra resultados de sorteios"""
     
     @staticmethod
     def check_combination(
@@ -21,8 +21,8 @@ class ResultCheckerService:
         numbers: List[int],
         contest_number: Optional[int] = None
     ) -> Dict[str, Any]:
-        """Check combination against a specific draw or latest draw"""
-        logger.info(f"Checking combination for {lottery_type}")
+        """Conferir combinação contra um sorteio específico ou o último sorteio"""
+        logger.info(f"Conferindo combinação para {lottery_type}")
         
         # Get the draw
         if contest_number:

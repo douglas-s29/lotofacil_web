@@ -1,6 +1,6 @@
 """
-Combination generator service
-Migrated from Django services
+Serviço de geração de combinações
+Migrado dos serviços Django
 """
 from sqlalchemy.orm import Session
 from app.models import LotteryConfiguration
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class CombinationGeneratorService:
-    """Service for generating lottery combinations"""
+    """Serviço para geração de combinações de loteria"""
     
     @staticmethod
     def generate_combinations(
@@ -26,8 +26,8 @@ class CombinationGeneratorService:
         include_delayed: bool = False,
         mix_strategy: bool = True
     ) -> Dict[str, Any]:
-        """Generate lottery combinations based on filters"""
-        logger.info(f"Generating {games_count} combinations for {lottery_type}")
+        """Gerar combinações de loteria baseadas em filtros"""
+        logger.info(f"Gerando {games_count} combinações para {lottery_type}")
         
         # Get lottery configuration
         config = db.query(LotteryConfiguration).filter(
@@ -35,13 +35,13 @@ class CombinationGeneratorService:
         ).first()
         
         if not config:
-            raise ValueError(f"Configuration not found for {lottery_type}")
+            raise ValueError(f"Configuração não encontrada para {lottery_type}")
         
         # Validate numbers_count
         if numbers_count < (config.min_bet_numbers or config.numbers_to_pick):
-            raise ValueError(f"Minimum numbers: {config.min_bet_numbers or config.numbers_to_pick}")
+            raise ValueError(f"Mínimo de números: {config.min_bet_numbers or config.numbers_to_pick}")
         if numbers_count > (config.max_bet_numbers or config.numbers_to_pick):
-            raise ValueError(f"Maximum numbers: {config.max_bet_numbers or config.numbers_to_pick}")
+            raise ValueError(f"Máximo de números: {config.max_bet_numbers or config.numbers_to_pick}")
         
         # Build number pool
         pool = set()
@@ -97,7 +97,7 @@ class CombinationGeneratorService:
         lottery_type: str,
         numbers: List[int]
     ) -> Dict[str, Any]:
-        """Validate a combination"""
+        """Validar uma combinação"""
         config = db.query(LotteryConfiguration).filter(
             LotteryConfiguration.lottery_type == lottery_type
         ).first()
@@ -105,7 +105,7 @@ class CombinationGeneratorService:
         if not config:
             return {
                 "valid": False,
-                "errors": [f"Configuration not found for {lottery_type}"],
+                "errors": [f"Configuração não encontrada para {lottery_type}"],
                 "warnings": []
             }
         
@@ -114,19 +114,19 @@ class CombinationGeneratorService:
         
         # Check number count
         if len(numbers) < (config.min_bet_numbers or config.numbers_to_pick):
-            errors.append(f"Minimum {config.min_bet_numbers or config.numbers_to_pick} numbers required")
+            errors.append(f"Mínimo de {config.min_bet_numbers or config.numbers_to_pick} números necessários")
         
         if len(numbers) > (config.max_bet_numbers or config.numbers_to_pick):
-            errors.append(f"Maximum {config.max_bet_numbers or config.numbers_to_pick} numbers allowed")
+            errors.append(f"Máximo de {config.max_bet_numbers or config.numbers_to_pick} números permitidos")
         
         # Check number range
         for num in numbers:
             if num < 1 or num > config.total_numbers:
-                errors.append(f"Number {num} is out of range (1-{config.total_numbers})")
+                errors.append(f"Número {num} está fora do intervalo (1-{config.total_numbers})")
         
         # Check for duplicates
         if len(numbers) != len(set(numbers)):
-            errors.append("Duplicate numbers found")
+            errors.append("Números duplicados encontrados")
         
         return {
             "valid": len(errors) == 0,
